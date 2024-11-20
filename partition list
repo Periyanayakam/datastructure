@@ -1,10 +1,4 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     struct ListNode *next;
- * };
- */
+
 typedef  struct ListNode ListNode;
 struct ListNode* partition(struct ListNode* head, int x){
     if (head == NULL) return head;
