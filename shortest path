@@ -1,0 +1,118 @@
+typedef struct {
+    int node;
+    double maxProb;
+} vertex;
+
+typedef struct {
+    vertex* maxHeap;
+    int size;
+} priorityQueue;
+
+typedef struct Node {
+    int vertex;
+    double weight;
+    struct Node* next;
+} Node;
+
+void swap (vertex* p, vertex* q) {
+    vertex temp = *p;
+    *p = *q;
+    *q = temp;
+}
+
+void add (priorityQueue* pQ, vertex V) {
+    pQ->size++;
+    pQ->maxHeap[pQ->size - 1] = V;
+    int index = pQ->size - 1;
+    while (index > 0) {
+        int n = (index - 1) / 2;
+        if (pQ->maxHeap[n].maxProb >= pQ->maxHeap[index].maxProb) {
+            return;
+        } 
+        swap (&pQ->maxHeap[n], &pQ->maxHeap[index]);
+        index = n;
+    }
+}
+
+vertex removeMax (priorityQueue* pQ) {
+    vertex max = pQ->maxHeap[0];
+    pQ->size--;
+    pQ->maxHeap[0] = pQ->maxHeap[pQ->size];
+    int index = 0; 
+    int left, right, largest;
+    while (1) {
+        left = 2 * index + 1;
+        right = 2 * index + 2;
+        largest = index;
+        if (left < pQ->size && pQ->maxHeap[left].maxProb > pQ->maxHeap[largest].maxProb) {
+            largest = left;
+        }
+        if (right < pQ->size && pQ->maxHeap[right].maxProb > pQ->maxHeap[largest].maxProb) {
+            largest = right;
+        }
+        if (largest != index) {
+            vertex temp = pQ->maxHeap[index];
+            pQ->maxHeap[index] = pQ->maxHeap[largest];
+            pQ->maxHeap[largest] = temp;
+            index = largest;
+        } else {
+            return max;
+        }
+    }
+    return max;
+}
+
+double maxProbability (int n, int** edges, int edgesSize, int* edgesColSize, double* succProb, int succProbSize, int start_node, int end_node) {
+    // Create adjacency list
+    Node** adjList = malloc(n * sizeof(Node*));
+    for (int i = 0; i < n; i++) {
+        adjList[i] = NULL;
+    }
+
+    for (int i = 0; i < edgesSize; i++) {
+        int u = edges[i][0], v = edges[i][1];
+        double w = succProb[i];
+
+        // Add edge to adjacency list
+        Node* newNode = malloc(sizeof(Node));
+        newNode->vertex = v;
+        newNode->weight = w;
+        newNode->next = adjList[u];
+        adjList[u] = newNode;
+
+        // Add reverse edge to adjacency list (since graph is undirected)
+        newNode = malloc(sizeof(Node));
+        newNode->vertex = u;
+        newNode->weight = w;
+        newNode->next = adjList[v];
+        adjList[v] = newNode;
+    }
+
+    // Initialize vertices and priority queue
+    vertex vertices[n];
+    for (int i = 0; i < n; i++) {
+        vertices[i].node = i;
+        vertices[i].maxProb = 0;
+    }
+    vertices[start_node].maxProb = 1.0;
+
+    priorityQueue pQ;
+    pQ.maxHeap = malloc(sizeof(vertex) * 2 * n); //Store double the memory just in case 
+    pQ.size = 0;
+
+    add(&pQ, vertices[start_node]);
+
+    // Run Dijkstra's algorithm
+    while (pQ.size > 0) {
+        vertex max = removeMax(&pQ);
+        Node* temp = adjList[max.node];
+        for (Node* temp = adjList[max.node]; temp; temp = temp->next) {
+            if (max.maxProb * temp->weight > vertices[temp->vertex].maxProb) {
+                vertices[temp->vertex].maxProb = max.maxProb * temp->weight;
+                add(&pQ, vertices[temp->vertex]);
+            }
+        }
+    }
+
+    return (double)vertices[end_node].maxProb;
+}
