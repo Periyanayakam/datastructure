@@ -1,10 +1,4 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     struct ListNode *next;
- * };
- */
+
  void swap(struct ListNode *p1,struct ListNode *p2)
  {
      int t=p1->val;
