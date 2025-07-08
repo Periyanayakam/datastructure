@@ -1,0 +1,4 @@
+def create_list(self):
+ for i in range(5):
+  val=int(input("Enter value{i+1}:"))
+  self.insert_at_end(val)
