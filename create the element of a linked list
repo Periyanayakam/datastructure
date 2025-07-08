@@ -1,0 +1,11 @@
+class Node:
+    def__init__(self, data):
+       self.data=data
+       self.next=None
+class LinkedList:
+   def__init__(self)
+      self.head=None
+def create_list(self):
+ for i in range(5):
+  val=int(input("Enter value{i+1}:"))
+  self.insert_at_end(val)
