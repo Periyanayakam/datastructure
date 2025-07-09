@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+
+void deleteAtPosition(struct Node** head_ref, int position) {
+    if (*head_ref == NULL) {
+        printf("List is empty. Nothing to delete.\n");
+        return;
+    }
+
+    struct Node* temp = *head_ref;
+
+  
+    if (position == 1) {
+        *head_ref = temp->next;
+        free(temp);
+        return;
+    }
+
+    
+    for (int i = 1; temp != NULL && i < position - 1; i++) {
+        temp = temp->next;
+    }
+
+    
+    if (temp == NULL || temp->next == NULL) {
+        printf("Position exceeds list length.\n");
+        return;
+    }
+
+
+    struct Node* node_to_delete = temp->next;
+    temp->next = temp->next->next;
+
+    free(node_to_delete);
+}
+
+
+void insertAtEnd(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    last->next = new_node;
+}
+
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insertAtEnd(&head, 10);
+    insertAtEnd(&head, 20);
+    insertAtEnd(&head, 30);
+    insertAtEnd(&head, 40);
+    insertAtEnd(&head, 50);
+
+    printf("Original List: ");
+    printList(head);
+
+    deleteAtPosition(&head, 3);
+    printf("After Deletion at Position 3: ");
+    printList(head);
+
+    return 0;
+}
