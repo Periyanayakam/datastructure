@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+
+void deleteAtEnd(struct Node** head_ref) {
+    if (*head_ref == NULL) {
+        printf("List is empty. Nothing to delete.\n");
+        return;
+    }
+
+    struct Node* temp = *head_ref;
+    struct Node* prev = NULL;
+
+   
+    if (temp->next == NULL) {
+        printf("Deleted node with data: %d\n", temp->data);
+        free(temp);
+        *head_ref = NULL;
+        return;
+    }
+
+
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    
+    printf("Deleted node with data: %d\n", temp->data);
+    prev->next = NULL;
+    free(temp);
+}
+
+
+void insertAtEnd(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head_ref;
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+
+   
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+
+    last->next = new_node;
+}
+
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+
+    insertAtEnd(&head, 10);
+    insertAtEnd(&head, 20);
+    insertAtEnd(&head, 30);
+    insertAtEnd(&head, 40);
+
+    printf("Original List: ");
+    printList(head);
+
+    deleteAtEnd(&head);
+    printf("After Deletion: ");
+    printList(head);
+
+    return 0;
+}
