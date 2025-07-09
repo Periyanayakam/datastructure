@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void insertAtPosition(struct Node** head_ref, int position, int new_data) {
+    if (position < 1) {
+        printf("Invalid position\n");
+        return;
+    }
+
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    if (position == 1) {
+        new_node->next = *head_ref;
+        *head_ref = new_node;
+        return;
+    }
+
+    struct Node* current = *head_ref;
+    for (int i = 1; i < position - 1; i++) {
+        if (current == NULL) {
+            printf("Position exceeds list length\n");
+            free(new_node);
+            return;
+        }
+        current = current->next;
+    }
+
+    new_node->next = current->next;
+    current->next = new_node;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    insertAtPosition(&head, 1, 10);
+    insertAtPosition(&head, 2, 20);
+    insertAtPosition(&head, 3, 30);
+    insertAtPosition(&head, 2, 25);
+
+    printf("Linked List: ");
+    printList(head);
+
+    return 0;
+}
